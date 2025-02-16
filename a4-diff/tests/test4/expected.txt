@@ -1,0 +1,23 @@
+calling my_diff(test4/a.txt, test4/b.txt, i = false, B = false);
+1c1
+< co is the best course in the world.
+---
+> CO is the best course in the world.
+2c2
+< assembly is challenging, but fun!
+---
+> Assembly is challenging, but fun!
+4c4
+< the TAs are super knowledgeable.
+---
+> The TAs are super knowledgeable.
+5c5
+< who needs Python?
+---
+> Who needs Python?
+6c6
+< the quick brown fox jumps over a lazy dog
+---
+> The quick brown fox jumps over a lazy dog
+
+calling my_diff(test4/a.txt, test4/b.txt, i = true, B = false);

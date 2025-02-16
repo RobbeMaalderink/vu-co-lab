@@ -1,0 +1,42 @@
+#!/bin/bash
+# Script used to build and run a target from the current directory
+# Runs the target in a Docker container x86_64 Ubuntu 24.04
+
+IMAGE_NAME="co-lab"
+
+create_docker() {
+	# Check if the Docker image exists
+	if ! docker images | grep -q "$IMAGE_NAME"; then
+		echo "Docker image $IMAGE_NAME not found. Building the image..."
+		docker buildx build --platform linux/amd64 -t $IMAGE_NAME . || return 1
+	fi
+	return 0
+}
+
+main() {
+	[ -z "$1" ] && {
+		echo "Usage: $0 <target> [args...]"
+		exit 1
+	}
+
+	create_docker || {
+		echo "Failed to create docker image"
+		exit 1
+	}
+
+	docker run --platform linux/amd64 --rm \
+		-v ./a0-playground:/co-lab/a0-playground \
+		-v ./a1-inout:/co-lab/a1-inout \
+		-v ./a2-factorial:/co-lab/a2-factorial \
+		-v ./a3a-fibonacci-calculator:/co-lab/a3a-fibonacci-calculator \
+		-v ./a3b-fibonacci-repl:/co-lab/a3b-fibonacci-repl \
+		-v ./a4-diff:/co-lab/a4-diff \
+		-v ./a5-printf:/co-lab/a5-printf \
+		-v ./a6-hpc:/co-lab/a6-hpc \
+		-v ./a7-bmp:/co-lab/a7-bmp \
+		-v ./a8-game:/co-lab/a8-game \
+		-i $IMAGE_NAME \
+		"$(basename $1)" ${@:2}
+}
+
+main $@

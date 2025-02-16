@@ -1,0 +1,17 @@
+/a0-hello
+/a0-sandbox
+/a0-sieve
+/a1
+/a2
+/a3a-iter
+/a3a-rec
+/a3b
+/a4
+/a5
+/a6
+/a7-encode
+/a7-decode
+/stream
+.build
+.idea
+.clang-format

@@ -1,0 +1,97 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build A0 Sieve",
+      "type": "shell",
+      "command": "${config:cmdBuildDebug} a0-sieve",
+      "group": "build"
+    },
+    {
+      "label": "Build A0 Hello",
+      "type": "shell",
+      "command": "${config:cmdBuildDebug} a0-hello",
+      "group": "build"
+    },
+    {
+      "label": "Build A0 Sandbox",
+      "type": "shell",
+      "command": "${config:cmdBuildDebug} a0-sandbox",
+      "group": "build"
+    },
+    {
+      "label": "Build A1 InOut",
+      "type": "shell",
+      "command": "${config:cmdBuildDebug} a1",
+      "group": "build"
+    },
+    {
+      "label": "Build A2 Factorial",
+      "type": "shell",
+      "command": "${config:cmdBuildDebug} a2",
+      "group": "build"
+    },
+    {
+      "label": "Build A3A Fibonacci Iterative",
+      "type": "shell",
+      "command": "${config:cmdBuildDebug} a3a-iter",
+      "group": "build"
+    },
+    {
+      "label": "Build A3A Fibonacci Recursive",
+      "type": "shell",
+      "command": "${config:cmdBuildDebug} a3a-rec",
+      "group": "build"
+    },
+    {
+      "label": "Build A3B Fibonacci REPL",
+      "type": "shell",
+      "command": "${config:cmdBuildDebug} a3b",
+      "group": "build"
+    },
+    {
+      "label": "Build A4 Diff",
+      "type": "shell",
+      "command": "${config:cmdBuildDebug} a4",
+      "group": "build"
+    },
+    {
+      "label": "Build A5 Printf",
+      "type": "shell",
+      "command": "${config:cmdBuildDebug} a5",
+      "group": "build"
+    },
+    {
+      "label": "Build A6 HPC",
+      "type": "shell",
+      "command": "${config:cmdBuildDebug} a6",
+      "group": "build"
+    },
+    {
+      "label": "Build A7 BMP Encode",
+      "type": "shell",
+      "command": "${config:cmdBuildDebug} a7-encode",
+      "group": "build"
+    },
+    {
+      "label": "Build A7 BMP Decode",
+      "type": "shell",
+      "command": "${config:cmdBuildDebug} a7-decode",
+      "group": "build"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "hpcSize",
+      "type": "promptString",
+      "description": "Array Size",
+      "default": "75000000"
+    },
+    {
+      "id": "hpcRuns",
+      "type": "promptString",
+      "description": "Kernel Runs",
+      "default": "20"
+    }
+  ]
+}

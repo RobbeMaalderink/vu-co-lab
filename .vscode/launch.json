@@ -1,0 +1,195 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug A0 Sieve",
+      "type": "lldb",
+      "env": {
+        "ASAN_OPTIONS": "detect_leaks=0"
+      },
+      "request": "launch",
+      "program": "a0-sieve",
+      "cwd": "${workspaceFolder}",
+      "stopOnEntry": false,
+      "preLaunchTask": "Build A0 Sieve"
+    },
+    {
+      "name": "Debug A0 Hello",
+      "type": "lldb",
+      "env": {
+        "ASAN_OPTIONS": "detect_leaks=0"
+      },
+      "request": "launch",
+      "program": "a0-hello",
+      "cwd": "${workspaceFolder}",
+      "stopOnEntry": false,
+      "preLaunchTask": "Build A0 Hello"
+    },
+    {
+      "name": "Debug A0 Sandbox",
+      "type": "lldb",
+      "env": {
+        "ASAN_OPTIONS": "detect_leaks=0"
+      },
+      "request": "launch",
+      "program": "a0-sandbox",
+      "cwd": "${workspaceFolder}",
+      "stopOnEntry": false,
+      "preLaunchTask": "Build A0 Sandbox"
+    },
+    {
+      "name": "Debug A1 InOut",
+      "type": "lldb",
+      "env": {
+        "ASAN_OPTIONS": "detect_leaks=0"
+      },
+      "request": "launch",
+      "program": "a1",
+      "cwd": "${workspaceFolder}",
+      "stopOnEntry": false,
+      "preLaunchTask": "Build A1 InOut"
+    },
+    {
+      "name": "Debug A2 Factorial",
+      "type": "lldb",
+      "env": {
+        "ASAN_OPTIONS": "detect_leaks=0"
+      },
+      "request": "launch",
+      "program": "a2",
+      "cwd": "${workspaceFolder}",
+      "stopOnEntry": false,
+      "preLaunchTask": "Build A2 Factorial"
+    },
+    {
+      "name": "Debug A3A Fibonacci Iterative",
+      "type": "lldb",
+      "env": {
+        "ASAN_OPTIONS": "detect_leaks=0"
+      },
+      "request": "launch",
+      "program": "a3a-iter",
+      "cwd": "${workspaceFolder}",
+      "stopOnEntry": false,
+      "preLaunchTask": "Build A3A Fibonacci Iterative"
+    },
+    {
+      "name": "Debug A3A Fibonacci Recursive",
+      "type": "lldb",
+      "env": {
+        "ASAN_OPTIONS": "detect_leaks=0"
+      },
+      "request": "launch",
+      "program": "a3a-rec",
+      "cwd": "${workspaceFolder}",
+      "stopOnEntry": false,
+      "preLaunchTask": "Build A3A Fibonacci Recursive"
+    },
+    {
+      "name": "Debug A3B Fibonacci REPL",
+      "type": "lldb",
+      "env": {
+        "ASAN_OPTIONS": "detect_leaks=0"
+      },
+      "request": "launch",
+      "program": "a3b",
+      "cwd": "${workspaceFolder}",
+      "stopOnEntry": false,
+      "preLaunchTask": "Build A3B Fibonacci REPL"
+    },
+    {
+      "name": "Debug A4 Diff",
+      "type": "lldb",
+      "env": {
+        "ASAN_OPTIONS": "detect_leaks=0"
+      },
+      "request": "launch",
+      "args": [
+        "./a4-diff/tests/${input:diffNumTest}/a.txt",
+        "./a4-diff/tests/${input:diffNumTest}/b.txt",
+        "${input:diffFlags}"
+      ],
+      "program": "a4",
+      "cwd": "${workspaceFolder}",
+      "stopOnEntry": false,
+      "preLaunchTask": "Build A4 Diff"
+    },
+    {
+      "name": "Debug A5 Printf",
+      "type": "lldb",
+      "env": {
+        "ASAN_OPTIONS": "detect_leaks=0"
+      },
+      "request": "launch",
+      "program": "a5",
+      "cwd": "${workspaceFolder}",
+      "stopOnEntry": false,
+      "preLaunchTask": "Build A5 Printf"
+    },
+    {
+      "name": "Debug A6 HPC",
+      "type": "lldb",
+      "env": {
+        "ASAN_OPTIONS": "detect_leaks=0"
+      },
+      "request": "launch",
+      "program": "a6",
+      "cwd": "${workspaceFolder}",
+      "stopOnEntry": false,
+      "preLaunchTask": "Build A6 HPC"
+    },
+    {
+      "name": "Debug A7 BMP Encode",
+      "type": "lldb",
+      "env": {
+        "ASAN_OPTIONS": "detect_leaks=0"
+      },
+      "request": "launch",
+      "program": "a7-encode",
+      "cwd": "${workspaceFolder}",
+      "stopOnEntry": false,
+      "preLaunchTask": "Build A7 BMP Encode"
+    },
+    {
+      "name": "Debug A7 BMP Decode",
+      "type": "lldb",
+      "env": {
+        "ASAN_OPTIONS": "detect_leaks=0"
+      },
+      "request": "launch",
+      "program": "a7-decode",
+      "cwd": "${workspaceFolder}",
+      "stopOnEntry": false,
+      "preLaunchTask": "Build A7 BMP Decode"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "diffNumTest",
+      "type": "pickString",
+      "description": "Which test should be used as input?",
+      "default": "test1",
+      "options": [
+        "test1",
+        "test2",
+        "test3",
+        "test4",
+        "test5",
+        "test6",
+        "test7"
+      ]
+    },
+    {
+      "id": "diffFlags",
+      "type": "pickString",
+      "description": "Flags",
+      "default": "",
+      "options": [
+        "",
+        "-i",
+        "-B",
+        "-iB"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+    "recommendations": [
+        "vadimcn.vscode-lldb",
+        "basdp.language-gas-x86",
+        "ms-vscode.cpptools",
+        "ms-vscode.hexeditor"
+    ]
+}
