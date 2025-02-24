@@ -52,7 +52,7 @@ main:
     call my_inc
 
     leaq printinc(%rip), %rdi
-    movq %rax, %esi
+    movq %rax, %rsi
     movb $0, %al
     call printf
 
