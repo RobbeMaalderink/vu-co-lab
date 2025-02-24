@@ -22,14 +22,50 @@
 
 .text
 # [constants/strings]
+getnumber:
+    .asciz "Enter a number:\n"
+printinc:
+    .asciz "The incremented number is: %ld\n"
+input:
+    .asciz "%ld"
+
 
 _main:
 main:
-    # Implement me!
+    pushq %rbp
+    movq %rsp, %rbp
+
+    leaq getnumber
+    movb $0, %al
+    call printf
+
+    leaq input(%rip), %rdi
+    subq $8, %rsp
+    movq %rsp, %rsi
+    movb $0, %rsp
+    call scanf
+    addq $8, %rsp
+    popq %rax
+
+    
+    movq %rax, %rdi
+    call my_inc
+
+    leaq printinc(%rip), %rdi
+    movq %rax, %esi
+    movb $0, %al
+    call printf
+
     ret
 
 # int64_t my_inc(int64_t n)
 _my_inc:
 my_inc:
-    # Implement me!
+    pushq %rbp
+    movq %rsp, %rbp
+
+    incq %rdi
+
+    movq %rbp, %rsp
+    popq %rbp    
     ret
