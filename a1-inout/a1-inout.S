@@ -35,7 +35,7 @@ main:
     pushq %rbp
     movq %rsp, %rbp
 
-    leaq getnumber
+    leaq getnumber(%rip), %rdi
     movb $0, %al
     call printf
 
