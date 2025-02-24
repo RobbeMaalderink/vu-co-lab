@@ -42,7 +42,7 @@ main:
     leaq input(%rip), %rdi
     subq $8, %rsp
     movq %rsp, %rsi
-    movb $0, %rsp
+    movb $0, %al
     call scanf
     addq $8, %rsp
     popq %rax
