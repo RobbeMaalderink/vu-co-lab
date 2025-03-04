@@ -42,14 +42,14 @@ main:
     call printf
 
     #read input from keyboard using scanf
+    subq $16, %rsp
     leaq input(%rip), %rdi
-    subq $8, %rsp
-    movq %rsp, %rsi
+    leaq -8(%rbp), %rsi
     movb $0, %al
-    subq $8, %rsp
     call scanf
-    addq $8, %rsp
-    popq %rax
+    movq -8(%rbp), %rax
+    addq $16, %rsp
+  
 
     #call subroutine that increments the read number
     movq %rax, %rdi
@@ -60,7 +60,9 @@ main:
     movq %rax, %rsi
     movb $0, %al
     call printf
-
+    
+    movq %rbp, %rsp
+    popq %rbp
     ret
 
 # int64_t my_inc(int64_t n)
