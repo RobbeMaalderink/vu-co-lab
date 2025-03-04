@@ -21,14 +21,15 @@
 # [initialized static variables]
 input:
     .asciz "%ld"
-getnumber:
-    .asciz "Enter a number:\n"
+
 printinc:
     .asciz "The incremented number is: %ld\n"
 
 
 .text
 # [constants/strings]
+getnumber:
+    .asciz "Enter a number:\n"
 
 
 
@@ -62,7 +63,7 @@ main:
     movb $0, %al
     call printf
     
-    movl    $0, %eax
+    movl $0, %eax
     movq %rbp, %rsp
     popq %rbp
     ret
