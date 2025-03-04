@@ -48,8 +48,7 @@ main:
     movb $0, %al
     call scanf
     movq -8(%rbp), %rax
-    addq $16, %rsp
-  
+
 
     #call subroutine that increments the read number
     movq %rax, %rdi
