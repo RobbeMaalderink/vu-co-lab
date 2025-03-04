@@ -49,7 +49,8 @@ main:
     subq $8, %rsp
     call scanf
     addq $8, %rsp
-    popq %rax
+    movq (%rsp), %rax
+    addq $8, %rsp
 
     #call subroutine that increments the read number
     movq %rax, %rdi
