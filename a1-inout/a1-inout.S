@@ -19,6 +19,8 @@
 
 .data
 # [initialized static variables]
+input:
+    .asciz "%ld"
 
 .text
 # [constants/strings]
@@ -26,8 +28,7 @@ getnumber:
     .asciz "Enter a number:\n"
 printinc:
     .asciz "The incremented number is: %ld\n"
-input:
-    .asciz "%ld"
+
 
 
 _main:
