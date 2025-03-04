@@ -46,6 +46,7 @@ main:
     subq $8, %rsp
     movq %rsp, %rsi
     movb $0, %al
+    subq $8, %rsp
     call scanf
     addq $8, %rsp
     popq %rax
