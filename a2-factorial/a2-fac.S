@@ -22,11 +22,11 @@
 
 .text
 askForInt:
-    .asciz "Enter a number:"
+    .asciz "Enter a number:\n"
 getInt:
     .asciz "%lu"
 printFactorial:
-    .asciz "%lu! is: %lu\n"
+    .asciz "%lu! =: %lu\n"
 
 _main:
 main:
