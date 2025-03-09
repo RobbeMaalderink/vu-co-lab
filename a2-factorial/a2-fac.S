@@ -24,9 +24,9 @@
 askForInt:
     .asciz "Enter a number:"
 getInt:
-    .asciz "%ld"
+    .asciz "%lu"
 printFactorial:
-    .asciz "%ld! is: %ld\n"
+    .asciz "%lu! is: %lu\n"
 
 _main:
 main:
