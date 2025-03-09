@@ -26,7 +26,7 @@ askForInt:
 getInt:
     .asciz "%lu"
 printFactorial:
-    .asciz "%lu! =: %lu\n"
+    .asciz "%lu! = %lu\n"
 
 _main:
 main:
