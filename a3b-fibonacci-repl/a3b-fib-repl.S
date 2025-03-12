@@ -26,11 +26,15 @@
 # [unitialized static variables]
 
 .data
-# [initialized static variables]
+size_array:
+    .quad 2
+size_memory: 
+    .quad 16 #in bytes
+
 
 .text
 askForIndex:
-    .asciz "Enter an index\n"
+    .asciz "Enter an index:\n"
 getIndex:
     .asciz "%lu"
 
@@ -48,12 +52,10 @@ main:
     #hardcode first 2 numbers of fibonacci sequence
     movq $16, %rdi
     call malloc
-    movq %rax, %r13
+    movq %rax, %r13 #r13 containts a pointer to the start of the memory address 
     movq $0, (%r13)
     movq $1, 1(%r13)
-    #maybe not needed
-    #movq %r13, %rdi
-    #call free
+    
 
     #while read index is a numerical input, do loop
     loop:
@@ -69,13 +71,13 @@ main:
         leaq -8(%rbp), %rsi
         movb $0, %al
         call scanf
-        movq -8(%rbp), %r12
+        movq -8(%rbp), %r12 #r12 contains the read number
         addq $16, %rsp
 
         #call subroutine
         movq %r12, %rdi
-        movq ?,%rsi
-        movq ?, %rdx
+        movq %r13,%rsi
+        movq $size_array, %rdx
         call my_fib
 
         #print result
@@ -93,6 +95,11 @@ main:
     leaq exiting(%rip), %rdi
     call printf
 
+    movq %r13, %rdi
+    call free
+
+    movq $0, %r12
+    movq $0, %r13
     movq $0, %rax
     movq %rbp, %rsp
     popq %rbp
@@ -119,20 +126,22 @@ my_fib:
     notalreadycalc:
         #compute difference between index and size, so that needed space for realloc can be computed
         subq %rdi, %rdx
-        movq %rdx, %r10
-        imulq $8, %rdx
-        addq ? , %rdx
+        movq %rdx, %r10 #r10 is the amount of fib. numbers that need to be computed
+        add %r10, $size_array
+
+        imulq $8, %r10 #now r10 is used to compute amount of extra bytes needed
+        addq %r10, $size_memory
 
         movq %r13, %rdi
-        movq %rdx, %rsi
+        movq $size_memory, %rsi
         call realloc
 
-        movq $1, %rcx
-    	
         #create loop to compute and store the needed fibonacci numbers
+        movq $1, %rcx #counter for while loop
         loop2:
             cmpq %r10, %rcx
-            jnl end2
+            jnl end2 
+
 
 
 
