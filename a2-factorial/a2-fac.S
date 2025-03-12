@@ -74,7 +74,10 @@ my_factorial:
     jmp elsecode
 
     ifcode:
-        jmp end1
+        movq $1, %rax
+        movq %rbp, %rsp
+        popq %rbp
+        ret
 
     elsecode:
         #save input argument on the stack before recursive call, pop it after & multiply with result of recursive call
@@ -84,14 +87,8 @@ my_factorial:
         
         popq %rdi
         imulq %rdi, %rax
-        jmp end2
-    end1:
-    movq $1, %rax
-    movq %rbp, %rsp
-    popq %rbp
-    ret
-
-    end2:
+        jmp end
+    end:
     movq %rbp, %rsp
     popq %rbp
     ret

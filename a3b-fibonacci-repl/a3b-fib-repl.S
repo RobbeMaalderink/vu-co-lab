@@ -37,10 +37,23 @@ getIndex:
 printSequence:
     .asciz "F_<%lu> = %lu"
 
+exiting:
+    .asciz "Exiting..."
+
 _main:
 main:
     pushq %rbp
     movq %rsp, %rbp
+
+    #hardcode first 2 numbers of fibonacci sequence
+    movq $16, %rdi
+    call malloc
+    movq %rax, %r13
+    movq $0, (%r13)
+    movq $1, 1(%r13)
+    #maybe not needed
+    #movq %r13, %rdi
+    #call free
 
     #while read index is a numerical input, do loop
     loop:
@@ -71,11 +84,15 @@ main:
         movq %rax, %rdx
         call printf
 
-        #end loop
+        #end of loop
         jmp loop
 
     end:
-    #exit with code 0
+
+    #exit 'gracefully' with code 0
+    leaq exiting(%rip), %rdi
+    call printf
+
     movq $0, %rax
     movq %rbp, %rsp
     popq %rbp
@@ -86,7 +103,8 @@ _my_fib:
 my_fib:
     pushq %rbp
     movq %rsp, %rbp
-
+    
+    ##if size > index, fib number at index already calculated, otherwise still need to calculate it
     cmpq %rdi, %rdx
     jg alreadycalc:
     jmp notalreadycalc:
@@ -99,8 +117,31 @@ my_fib:
         ret   
 
     notalreadycalc:
+        #compute difference between index and size, so that needed space for realloc can be computed
+        subq %rdi, %rdx
+        movq %rdx, %r10
+        imulq $8, %rdx
+        addq ? , %rdx
+
+        movq %r13, %rdi
+        movq %rdx, %rsi
+        call realloc
+
+        movq $1, %rcx
+    	
+        #create loop to compute and store the needed fibonacci numbers
+        loop2:
+            cmpq %r10, %rcx
+            jnl end2
 
 
+
+            incq %rcx
+            jmp loop2
+
+
+
+    end2:
     movq %rbp, %rsp
     popq %rbp
     ret
