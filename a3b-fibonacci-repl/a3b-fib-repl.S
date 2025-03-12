@@ -32,6 +32,7 @@ size_memory:
     .quad 16 #in bytes
 
 
+
 .text
 askForIndex:
     .asciz "Enter an index:\n"
@@ -59,8 +60,6 @@ main:
 
     #while read index is a numerical input, do loop
     loop:
-        condition!!
-        jne end
         #ask for index
         leaq askForIndex(%rip), %rdi
         call printf
@@ -71,8 +70,11 @@ main:
         leaq -8(%rbp), %rsi
         movb $0, %al
         call scanf
-        movq -8(%rbp), %r12 #r12 contains the read number
+        movq -8(%rbp), %r12 #r12 contains the read index
         addq $16, %rsp
+
+        cmpq ?, %r12
+        jne end
 
         #call subroutine
         movq %r12, %rdi
@@ -80,10 +82,17 @@ main:
         movq $size_array, %rdx
         call my_fib
 
+
+        #get right number based on index
+        imulq $8,%r12,%r11
+        
+        movq -%r11(%r13,$size_array,8),%r11
+        
+
         #print result
         leaq printSequence(%rip), %rdi
         movq %r12, %rsi
-        movq %rax, %rdx
+        movq %r11, %rdx
         call printf
 
         #end of loop
@@ -124,33 +133,34 @@ my_fib:
         ret   
 
     notalreadycalc:
-        #compute difference between index and size, so that needed space for realloc can be computed
-        subq %rdi, %rdx
-        movq %rdx, %r10 #r10 is the amount of fib. numbers that need to be computed
-        add %r10, $size_array
-
-        imulq $8, %r10 #now r10 is used to compute amount of extra bytes needed
-        addq %r10, $size_memory
-
-        movq %r13, %rdi
-        movq $size_memory, %rsi
-        call realloc
 
         #create loop to compute and store the needed fibonacci numbers
-        movq $1, %rcx #counter for while loop
+        movq %rdx, %rcx #counter for while loop
         loop2:
-            cmpq %r10, %rcx
-            jnl end2 
+            cmpq %rdi, %rcx
+            jnl end2
 
+            #compute fib. number size + 1 by adding fib. numbers size - 1 and size - 2
+            movq -8(%r13,$size_array,8), %r11
+            addq -16(%r13,$size_array,8), %r11
 
+            #create space for fib. number size + 1
+            movq %r13, %rdi
+            incq $size_array
+            addq $8, size_memory
+            movq $size_memory, %rsi
+            call realloc
 
+            #store new fib. number at the last 8 bytes in memory
+            movq %r11, -8(%r13,size_array,8)
 
             incq %rcx
             jmp loop2
 
 
 
-    end2:
-    movq %rbp, %rsp
-    popq %rbp
-    ret
+        end2:
+        movq %r13, %rax
+        movq %rbp, %rsp
+        popq %rbp
+        ret
