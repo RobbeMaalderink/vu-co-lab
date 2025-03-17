@@ -30,6 +30,8 @@ size_array:
     .quad 2
 size_memory: 
     .quad 16 #in bytes
+placeholder:
+    .quad 0
 
 
 
@@ -73,8 +75,8 @@ main:
         movq -8(%rbp), %r12 #r12 contains the read index
         addq $16, %rsp
 
-        cmpq ?, %r12
-        jne end
+        #cmpq ?, %r12
+        #jne end
 
         #call subroutine
         movq %r12, %rdi
@@ -85,8 +87,8 @@ main:
 
         #get right number based on index
         imulq $8,%r12,%r11
-        
-        movq -%r11(%r13,$size_array,8),%r11
+        movq %r11, $placeholder
+        movq -$placeholder(%r13,$size_array,8),%r11
         
 
         #print result
