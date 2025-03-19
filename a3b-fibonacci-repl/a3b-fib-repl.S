@@ -23,146 +23,176 @@
 #endif
 
 .bss
-# [unitialized static variables]
+    .space 256 #bytes
 
 .data
-size_array:
-    .quad 2
-size_memory: 
-    .quad 16 #in bytes
-placeholder:
-    .quad 0
-
-
+# [initialized static variables]
 
 .text
-askForIndex:
-    .asciz "Enter an index:\n"
-getIndex:
-    .asciz "%lu"
+# [constants/strings]
 
-printSequence:
-    .asciz "F_<%lu> = %lu"
-
-exiting:
-    .asciz "Exiting..."
+prompt:         .asciz "Enter an index: "
+result_format:  .asciz "F_%lu = %lu\n"
+scan_format:    .asciz "%lu"
+exit_message:   .asciz "Exiting...\n"
 
 _main:
 main:
-    pushq %rbp
-    movq %rsp, %rbp
-
-    #hardcode first 2 numbers of fibonacci sequence
-    movq $16, %rdi
-    call malloc
-    movq %rax, %r13 #r13 containts a pointer to the start of the memory address 
-    movq $0, (%r13)
-    movq $1, 1(%r13)
+# set up stack frame
+    pushq   %rbp
+    movq    %rsp, %rbp
+    subq    $32, %rsp
+    movq    $0, -8(%rbp) #pointer for fibnumber
+    movq    $0, -16(%rbp) #array size
     
+#loop for input
+input_loop:
+#print prompt
+    leaq    prompt(%rip), %rdi
+    movb    $0, %al
+    call    printf
+#put input index into var at -24
+    leaq    -24(%rbp), %rsi
+    leaq    scan_format(%rip), %rdi
+    movb    $0, %al
+    call    scanf
+# If scanf returns integer, continue else exit
+    cmpq    $1, %rax
+    jne     exit_program
+#call my_fib(uint64_t n, uint64_t *arr, uint64_t size)
+    movq    -24(%rbp), %rdi
+    movq    -8(%rbp), %rsi
+    movq    -16(%rbp), %rdx
+    call    my_fib
+#update fibarray and increment array size
+    movq    %rax, -8(%rbp)
+    movq    -24(%rbp), %rax
+    addq    $1, %rax
+    movq    %rax, -16(%rbp)
+#get calculated fibnumber and print
+    movq    -24(%rbp), %rsi
+    movq    -8(%rbp), %rax
+    movq    -24(%rbp), %rcx
+    movq    (%rax,%rcx,8), %rdx
+    leaq    result_format(%rip), %rdi
+    movb    $0, %al
+    call    printf
 
-    #while read index is a numerical input, do loop
-    loop:
-        #ask for index
-        leaq askForIndex(%rip), %rdi
-        call printf
-    
-        #read index
-        subq $16, %rsp
-        leaq getIndex(%rip), %rdi
-        leaq -8(%rbp), %rsi
-        movb $0, %al
-        call scanf
-        movq -8(%rbp), %r12 #r12 contains the read index
-        addq $16, %rsp
+    jmp     input_loop
 
-        #cmpq ?, %r12
-        #jne end
-
-        #call subroutine
-        movq %r12, %rdi
-        movq %r13,%rsi
-        movq $size_array, %rdx
-        call my_fib
-
-
-        #get right number based on index
-        imulq $8,%r12,%r11
-        movq %r11, $placeholder
-        movq -$placeholder(%r13,$size_array,8),%r11
-        
-
-        #print result
-        leaq printSequence(%rip), %rdi
-        movq %r12, %rsi
-        movq %r11, %rdx
-        call printf
-
-        #end of loop
-        jmp loop
-
-    end:
-
-    #exit 'gracefully' with code 0
-    leaq exiting(%rip), %rdi
-    call printf
-
-    movq %r13, %rdi
-    call free
-
-    movq $0, %r12
-    movq $0, %r13
-    movq $0, %rax
-    movq %rbp, %rsp
-    popq %rbp
+#gracefully exiting the program
+exit_program:
+#print exit message
+    leaq    exit_message(%rip), %rdi
+    movb    $0, %al
+    call    printf
+#free fib array memory
+    movq    -8(%rbp), %rdi
+    call    free
+#restore stack -> return
+    movq    $0, %rax
+    addq    $32, %rsp
+    popq    %rbp
     ret
 
 # uint64_t *my_fib(uint64_t n, uint64_t *arr, uint64_t size)
 _my_fib:
 my_fib:
-    pushq %rbp
-    movq %rsp, %rbp
+#prologue
+    pushq   %rbp
+    movq    %rsp, %rbp
+    subq    $32, %rsp
+#save arguments
+    movq    %rdi, -8(%rbp)
+    movq    %rsi, -16(%rbp)
+    movq    %rdx, -24(%rbp)
+#If index already in rdx return array
+    cmpq    %rdi, %rdx
+    jg      return_array
+   cmpq    $0, %rsi
+    jne     resize_array
+    #allocate memory for n+1 fibnumbers
+    movq    -8(%rbp), %rdi
+    addq    $1, %rdi
+    imulq   $8, %rdi
+    call    malloc
+    movq    %rax, -16(%rbp)
+    #f size is 0, initialize F_0 and F_1
+    movq    -16(%rbp), %rax
+    movq    $0, (%rax)
+    cmpq    $0, -8(%rbp)
+    je      return_array
+    #initialize F_0 = 0, return if we only needed F_0
+    movq    $1, 8(%rax)
+    movq    $2, -24(%rbp)
+    cmpq    $1, -8(%rbp)
+    je      return_array
+    jmp     calculate_fib
+
+#handles resizing the existing array to fit new Fibnumbers
+resize_array:
+    #resize array to hold +1 elements 
+    movq    -16(%rbp), %rdi
+    movq    -8(%rbp), %rsi
+    addq    $1, %rsi
+    imulq   $8, %rsi
+    call    realloc
+    movq    %rax, -16(%rbp)
+    #If size is nonzero check if there is one element
+    cmpq    $0, -24(%rbp)
+    jne     check_size_one
+    #If unitialized set F-) and return if input is 0
+    movq    -16(%rbp), %rax
+    movq    $0, (%rax)
+    cmpq    $0, -8(%rbp)
+    je      return_array
+    #set F-1 = 1 and update size to 2, if input is 1 return array
+    movq    $1, 8(%rax)
+    movq    $2, -24(%rbp)
+    cmpq    $1, -8(%rbp)
+    je      return_array
+    jmp     calculate_fib
     
-    ##if size > index, fib number at index already calculated, otherwise still need to calculate it
-    cmpq %rdi, %rdx
-    jg alreadycalc:
-    jmp notalreadycalc:
+#checks if we only have F0 calculated and need to initialize F1
+check_size_one:
+    #If size not 1, continue calculations
+    cmpq    $1, -24(%rbp)
+    jne     calculate_fib
+    #Else initialize f_1 and update size, if input is 1 return array
+    movq    -16(%rbp), %rax
+    movq    $1, 8(%rax)
+    movq    $2, -24(%rbp)
+    cmpq    $1, -8(%rbp)
+    je      return_array
 
+calculate_fib:
+    movq    -24(%rbp), %rcx
+    movq    -8(%rbp), %rdi
 
-    alreadycalc:
-        movq %rsi, %rax
-        movq %rbp, %rsp
-        popq %rbp
-        ret   
+#main calculation loop that implements F_n = F_n-1 + F_n-2
+calculate_loop:
+    #If current size > n, return array
+    cmpq    %rdi, %rcx
+    jg      return_array
+    movq    -16(%rbp), %rax
+    movq    %rcx, %rdx
+    subq    $1, %rdx
+    movq    (%rax,%rdx,8), %rsi
+    #load F_(n-1) into %rsi
+    movq    %rcx, %rdx
+    subq    $2, %rdx
+    movq    (%rax,%rdx,8), %rdx
+    #load F_(n-2) into %rdx
+    addq    %rdx, %rsi
+    movq    %rsi, (%rax,%rcx,8)
+    #calculate F_n = F_n-1 + F_n-2 and store in array
+    incq    %rcx
+    jmp     calculate_loop
 
-    notalreadycalc:
-
-        #create loop to compute and store the needed fibonacci numbers
-        movq %rdx, %rcx #counter for while loop
-        loop2:
-            cmpq %rdi, %rcx
-            jnl end2
-
-            #compute fib. number size + 1 by adding fib. numbers size - 1 and size - 2
-            movq -8(%r13,$size_array,8), %r11
-            addq -16(%r13,$size_array,8), %r11
-
-            #create space for fib. number size + 1
-            movq %r13, %rdi
-            incq $size_array
-            addq $8, size_memory
-            movq $size_memory, %rsi
-            call realloc
-
-            #store new fib. number at the last 8 bytes in memory
-            movq %r11, -8(%r13,size_array,8)
-
-            incq %rcx
-            jmp loop2
-
-
-
-        end2:
-        movq %r13, %rax
-        movq %rbp, %rsp
-        popq %rbp
-        ret
+#returns the  array of fibnumbers
+return_array:
+    movq    -16(%rbp), %rax
+    
+    addq    $32, %rsp
+    popq    %rbp
+    ret
